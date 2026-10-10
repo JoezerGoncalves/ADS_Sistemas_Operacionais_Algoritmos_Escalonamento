@@ -1,0 +1,1 @@
+# ADS_Sistemas_Operacionais_Algoritmos_Escalonamento
