@@ -44,21 +44,23 @@ int  main(void) {
     int tempo_atual = 0;
     int concluido = 0;
 
+    //inicia a simulação, loop nao finaliza ate todos os processos serem concluidos
     while(concluido < n) {
 
         int ind_menor = -1; // variavel para guardar a posição do vetor(-1 pois nao existe nenhum)
         int min_temp_restante = INT_MAX; //variavel começa com o maior nº possivel  para que qualquer tempo seja maior que ele
 
         for(int i = 0; i < n; i++) {
-
+                //Verifica se o processo chegou e ainda nao finalizou
                 if (p[i].temp_chegada <= tempo_atual && p[i].concluido == 0) {
-
+                    //procura o menor tempo restante
                     if (p[i].temp_restante < min_temp_restante) {
 
                         min_temp_restante = p[i].temp_restante;
-                        ind_menor = i;
+                        ind_menor = i; //atualiza indice do processo com menor tempo
 
-                    }else if (p[i].temp_restante == min_temp_restante) {
+                    }else if (p[i].temp_restante == min_temp_restante) { // se os tempos restantes forem iguais prioriza o que chegou primeiro
+                        
                         if (ind_menor == -1 || p[i].temp_chegada < p[ind_menor].temp_chegada) {
                             ind_menor = i;
                         }
