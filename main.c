@@ -1,3 +1,4 @@
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -18,7 +19,7 @@ int  main(void) {
     printf("Quantos processos deseja simular: ");
     scanf(" %d",&n);
 
-    Processos p[n];
+    Processos p[n]; //vetor de processos com tamanho informado
 
     for(int i = 0; i < n; i++) {
 
@@ -35,12 +36,36 @@ int  main(void) {
     }
     //  --- Simulação da linha do tempo ---
 
+    printf("\n==================================================\n");
+    printf("        TIMELINE DE EXECUCAO - SRT (Passo a Passo)\n");
+    printf("==================================================\n");
+
+
     int tempo_atual = 0;
     int concluido = 0;
 
     while(concluido < n) {
 
-        
+        int ind_menor = -1; // variavel para guardar a posição do vetor(-1 pois nao existe nenhum)
+        int min_temp_restante = INT_MAX; //variavel começa com o maior nº possivel  para que qualquer tempo seja maior que ele
+
+        for(int i = 0; i < n; i++) {
+
+                if (p[i].temp_chegada <= tempo_atual && p[i].concluido == 0) {
+
+                    if (p[i].temp_restante) {
+
+                        min_temp_restante = p[i].temp_restante;
+                        ind_menor = i;
+
+                    }else if (p[i].temp_restante) {
+                        if (ind_menor == -1 || p[i].temp_chegada < p[ind_menor].temp_chegada) {
+                            ind_menor = i;
+                        }
+                    }
+
+                }
+            }
 
 
 
