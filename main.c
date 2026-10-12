@@ -20,14 +20,17 @@ int  main(void) {
     Processos p[n];
 
     for(int i=0;i<n;i++) {
+
         printf("Processo: %d\n",i+1);
         printf("Nome do processo: ");
         scanf(" %s",&p[i].nome);
         printf("Tempo de burst(Uso da CPU): ");
         scanf(" %d",&p[i].burst);
+        printf("Tempo de chegada: ");
+        scanf(" %d",&p[i].temp_chegada);
 
-
-
+        p[i].temp_restante = p[i].burst;
+        p[i].concluido = 0;
     }
 
 
