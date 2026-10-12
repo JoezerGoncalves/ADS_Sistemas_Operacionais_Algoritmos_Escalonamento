@@ -12,9 +12,10 @@ typedef struct {
 }Processos;
 
 int  main(void) {
+
     int n;
 
-    printf("Quntos processos deseja simular: ");
+    printf("Quantos processos deseja simular: ");
     scanf(" %d",&n);
 
     Processos p[n];
@@ -31,6 +32,18 @@ int  main(void) {
 
         p[i].temp_restante = p[i].burst;
         p[i].concluido = 0;
+    }
+    //  --- Simulação da linha do tempo ---
+
+    int tempo_atual = 0;
+    int concluido = 0;
+
+    while(concluido < n) {
+
+        
+
+
+
     }
 
 
