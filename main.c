@@ -14,14 +14,17 @@ typedef struct {
 int  main(void) {
     int n;
 
-    printf("Quntos processos deseja simular: \n");
-    scanf("%d",&n);
+    printf("Quntos processos deseja simular: ");
+    scanf(" %d",&n);
 
     Processos p[n];
 
     for(int i=0;i<n;i++) {
-        printf("Process: %d",i+1);
-
+        printf("Processo: %d\n",i+1);
+        printf("Nome do processo: ");
+        scanf(" %s",&p[i].nome);
+        printf("Tempo de burst(Uso da CPU): ");
+        scanf(" %d",&p[i].burst);
 
 
 
