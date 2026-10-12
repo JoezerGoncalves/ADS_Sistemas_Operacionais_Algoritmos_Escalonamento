@@ -40,7 +40,7 @@ int  main(void) {
     printf("        TIMELINE DE EXECUCAO - SRT (Passo a Passo)\n");
     printf("==================================================\n");
 
-
+    // Variáveis para controlar o tempo e quantos processos já terminaram
     int tempo_atual = 0;
     int concluido = 0;
 
@@ -53,12 +53,12 @@ int  main(void) {
 
                 if (p[i].temp_chegada <= tempo_atual && p[i].concluido == 0) {
 
-                    if (p[i].temp_restante) {
+                    if (p[i].temp_restante < min_temp_restante) {
 
                         min_temp_restante = p[i].temp_restante;
                         ind_menor = i;
 
-                    }else if (p[i].temp_restante) {
+                    }else if (p[i].temp_restante == min_temp_restante) {
                         if (ind_menor == -1 || p[i].temp_chegada < p[ind_menor].temp_chegada) {
                             ind_menor = i;
                         }
