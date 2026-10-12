@@ -19,7 +19,7 @@ int  main(void) {
 
     Processos p[n];
 
-    for(int i=0;i<n;i++) {
+    for(int i = 0; i < n; i++) {
 
         printf("Processo: %d\n",i+1);
         printf("Nome do processo: ");
