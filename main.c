@@ -60,7 +60,7 @@ int  main(void) {
                         ind_menor = i; //atualiza indice do processo com menor tempo
 
                     }else if (p[i].temp_restante == min_temp_restante) { // se os tempos restantes forem iguais prioriza o que chegou primeiro
-                        
+
                         if (ind_menor == -1 || p[i].temp_chegada < p[ind_menor].temp_chegada) {
                             ind_menor = i;
                         }
@@ -68,9 +68,7 @@ int  main(void) {
 
                 }
             }
-
-
-
+        printf("Tempo: %d\n", tempo_atual);
     }
 
 
