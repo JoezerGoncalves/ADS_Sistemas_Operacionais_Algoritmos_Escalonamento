@@ -1,47 +1,83 @@
-#include <limits.h>  // Necessário para usar INT_MAX (o maior número inteiro possível)
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>  // Necessário para usar INT_MAX
+
+#define QUANTUM 2    // Definição do Quantum fixo
 
 // Definição da estrutura (molde) de um Processo
 typedef struct {
-    char nome[10];      // Nome do processo (ex: P1, P2)
+    char nome[20];      // Nome do processo (ex: P1, P2)
     int burst;          // Tempo total que o processo precisa na CPU
     int temp_chegada;   // Momento exato em que o processo entra no sistema
     int temp_restante;  // Quanto tempo falta para o processo terminar (vai diminuindo)
     int concluido;      // Flag: 0 = em execução/espera, 1 = já terminou
-} Processo;
+} Processos;
 
 
-// FUNÇÃO AUXILIAR DO ROUND ROBIN: Acha o próximo processo em ordem circular
+// FUNÇÃO DO ALGORITMO ROUND ROBIN (Sua implementação)
+void algoritmoRoundRobin(Processos p[], int n) {
+    int tempo = 0;
+    int concluidos = 0;
+    int i = 0; // para começar no primeiro indice do vetor
 
-int achar_proximo_rr(Processo p[], int n, int tempo_atual, int atual) {
-    // Se 'atual' for -1 (ninguém na CPU), começamos a busca do índice 0.
-    // Senão, começamos a buscar a partir do próximo processo (atual + 1).
-    int inicio;
-    if (atual == -1) {
-        inicio = 0;
-    } else {
-        inicio = atual;
+    // Reseta o estado dos processos antes de iniciar
+    for(int idx = 0; idx < n; idx++) {
+        p[idx].temp_restante = p[idx].burst;
+        p[idx].concluido = 0;
     }
 
-    // Laço que dá uma "volta completa" no vetor de processos
-    for (int i = 1; i <= n; i++) {
-        // A matemática do módulo (%) faz a fila ser circular.
-        // Se o atual for o último, ele volta para o 0.
-        int idx = (inicio + i) % n;
+    printf("\n=== ROUND ROBIN (QUANTUM = %d) ===\n", QUANTUM);
 
-        // Se o processo achado já chegou e não terminou, ele é o próximo!
-        if (p[idx].temp_chegada <= tempo_atual && p[idx].concluido == 0) {
-            return idx;
+    while(concluidos < n){ // enquanto o numero de processos for maior do que os processos concluídos o loop continua
+
+        if(p[i].temp_chegada <= tempo && p[i].temp_restante > 0){
+
+            int tempo_executar;
+            if(p[i].temp_restante > QUANTUM){
+                tempo_executar = QUANTUM;
+            }else{
+                tempo_executar = p[i].temp_restante;
+            }
+
+            printf("Tempo %d: Executando %s por %d\n", tempo, p[i].nome, tempo_executar);
+
+            p[i].temp_restante = p[i].temp_restante - tempo_executar;
+            tempo = tempo + tempo_executar;
+
+            if(p[i].temp_restante == 0 && p[i].concluido == 0){
+                p[i].concluido = 1;
+                concluidos++;
+                printf("  %s finalizou.\n", p[i].nome);
+            }
+        }else{
+            // 2. Se o processo ainda não chegou, verificamos se há QUALQUER outro processo pronto
+            int nenhum_pronto = 1;
+            for(int j = 0; j < n; j++){
+                if (p[j].temp_chegada <= tempo && p[j].temp_restante > 0) {
+                    nenhum_pronto = 0;
+                    break;
+                }
+            }
+
+            // Se ninguém chegou ainda, a CPU fica ociosa e o relógio avança 1 segundo
+            if(nenhum_pronto) {
+                printf("Tempo %d: CPU Ociosa\n", tempo);
+                tempo++;
+                continue; // Volta pro início do while sem avançar o 'i'
+            }
+        }
+        i++;//para passar pro próximo indice
+        if (i == n) {
+            i = 0;//quando indice chegar na ultima posição do vetor ele volta pro indice 0
         }
     }
-    return -1; // Se ninguém foi achado, retorna -1 (CPU Ociosa)
+
+    printf("\nTodos os processos foram concluidos.\n");
 }
 
 
-// FUNÇÃO DO ALGORITMO SRT (Shortest Remaining Time)
-
-void simularSRT(Processo p[], int n) {
+// FUNÇÃO DO ALGORITMO SRT (Shortest Remaining Time - Sua implementação)
+void simularSRT(Processos p[], int n) {
     int tempo_atual = 0;
     int concluido = 0;
 
@@ -106,7 +142,7 @@ void simularSRT(Processo p[], int n) {
             if (!tem_alguem) printf("-"); // Se fila vazia, imprime traço
             printf("\n");
 
-            // 3.  A CPU trabalha por 1 unidade de tempo
+            // 3. A CPU trabalha por 1 unidade de tempo
             p[ind_menor].temp_restante--;
 
             // 4. Se o tempo zerou, processo concluído
@@ -116,135 +152,59 @@ void simularSRT(Processo p[], int n) {
                 printf("  >>> %s CONCLUIDO!\n", p[ind_menor].nome);
             }
         }
-        // 5.  Avança o tempo do sistema em 1
+        // 5. Avança o tempo do sistema em 1
         tempo_atual++;
     }
     printf("\nSimulacao SRT finalizada! Tempo total: %d unidades.\n", tempo_atual);
 }
 
 
-// FUNÇÃO DO ALGORITMO ROUND ROBIN
-
-void simularRoundRobin(Processo p[], int n, int quantum) {
-    int tempo_atual = 0;
-    int concluido = 0;
-    int idx_atual = -1;     // Guarda quem está na CPU
-    int tempo_no_cpu = 0;   // Conta quanto tempo o processo atual já usou a CPU neste ciclo
-
-    // Reseta o estado dos processos
-    for(int i = 0; i < n; i++) {
-        p[i].temp_restante = p[i].burst;
-        p[i].concluido = 0;
-    }
-
-    printf("\n==================================================\n");
-    printf("       TIMELINE DE EXECUCAO - ROUND ROBIN (Q=%d)\n", quantum);
-    printf("==================================================\n");
-
-    while(concluido < n) {
-        // 1. Quando a CPU está ociosa, OU o quantum estourou, OU o processo atual acabou
-        if (idx_atual == -1 || tempo_no_cpu == quantum || p[idx_atual].concluido == 1) {
-
-            // Chama a função auxiliar para achar o próximo da fila circular
-            int novo_idx = achar_proximo_rr(p, n, tempo_atual, idx_atual);
-
-            if (novo_idx != -1) {
-                // Se trocou de processo, reseta o contador de tempo na CPU
-                if (novo_idx != idx_atual) tempo_no_cpu = 0;
-                idx_atual = novo_idx;
-            } else {
-                idx_atual = -1; // CPU Ociosa
-            }
-        }
-
-        // 2. EXIBIÇÃO: Mostra o cenário
-        printf("\n[ Tempo: %d -> %d ]\n", tempo_atual, tempo_atual + 1);
-
-        if (idx_atual == -1) {
-            printf("  [CPU] Ociosa\n");
-        } else {
-            // Mostra quem está na CPU. O formato "CPU: 2/4" mostra que ele está no segundo tick de 4 possíveis do quantum
-            printf("  [CPU] Executando: %s (Restam %d unid. no total. CPU: %d/%d)\n",
-                   p[idx_atual].nome, p[idx_atual].temp_restante, tempo_no_cpu + 1, quantum);
-
-            // Impressão da Fila de Prontos (idêntica ao SRT)
-            printf("  [Fila de Prontos]: ");
-            int primeiro_da_fila = 1;
-            int tem_alguem = 0;
-            for (int i = 0; i < n; i++) {
-                if (i != idx_atual && p[i].temp_chegada <= tempo_atual && p[i].concluido == 0) {
-                    if (!primeiro_da_fila) printf(", ");
-                    printf("%s (%d)", p[i].nome, p[i].temp_restante);
-                    primeiro_da_fila = 0;
-                    tem_alguem = 1;
-                }
-            }
-            if (!tem_alguem) printf("-");
-            printf("\n");
-
-            // 3. A CPU trabalha por 1 unidade
-            p[idx_atual].temp_restante--;
-            tempo_no_cpu++; // Soma 1 no tempo que ele está usando o quantum
-
-            // 4. Se o tempo restante zerou
-            if (p[idx_atual].temp_restante == 0) {
-                p[idx_atual].concluido = 1;
-                concluido++;
-                printf("  >>> %s CONCLUIDO!\n", p[idx_atual].nome);
-            }
-        }
-        // 5.Avança o tempo
-        tempo_atual++;
-    }
-    printf("\nSimulacao Round Robin finalizada! Tempo total: %d unidades.\n", tempo_atual);
-}
-
-
+// FUNÇÃO PRINCIPAL (MAIN)
 int main(void) {
-    int n, opcao, quantum;
+    int n, opcao = 0;
 
-    printf("Bem-vindo ao Simulador de Escalonamento de Processos!\n\n");
+    printf("Digite o numero de processos: ");
+    scanf("%d", &n);
 
-    // 1. Pergunta o algoritmo ANTES de pedir os dados
-    printf("Escolha o algoritmo que deseja simular:\n");
-    printf("1 - SRT (Shortest Remaining Time)\n");
-    printf("2 - Round Robin\n");
-    printf("Opcao: ");
-    scanf(" %d", &opcao);
+    Processos processos[n];
 
-    if (opcao != 1 && opcao != 2) {
-        printf("Opcao invalida! Encerrando.\n");
-        return 1; // Encerra o programa com erro
+    for(int i = 0; i < n; i++){
+        printf("\nProcesso %d:\n", i + 1);
+        printf("Nome do processo: ");
+        scanf("%19s", processos[i].nome);
+
+        printf("Tempo de uso na CPU (Burst): ");
+        scanf("%d", &processos[i].burst);
+
+        printf("Tempo de chegada: ");
+        scanf("%d", &processos[i].temp_chegada);
+
+        processos[i].temp_restante = processos[i].burst;
+        processos[i].concluido = 0;
     }
 
-    // 2. Quantos processos e os dados de cada um
-    printf("\nQuantos processos deseja simular: ");
-    scanf(" %d", &n);
+    // Loop de validação para garantir que o usuário digite apenas 1 ou 2
+    while(opcao != 1 && opcao != 2) {
+        printf("\nEscolha qual algoritmo quer usar:\n");
+        printf("1 para Round Robin\n");
+        printf("2 para SRT\n");
+        printf("Digite sua opcao: ");
+        scanf("%d", &opcao);
 
-    Processo p[n]; // Cria o vetor de processos
-
-    for(int i = 0; i < n; i++) {
-        printf("\n--- Processo: %d ---\n", i+1);
-        printf("Nome do processo (ex: P1): ");
-        scanf(" %s", p[i].nome); // Sem o '&' porque string em C já é um ponteiro
-        printf("Tempo de uso da CPU (Burst time): ");
-        scanf(" %d", &p[i].burst);
-        printf("Tempo de chegada (Arrival time): ");
-        scanf(" %d", &p[i].temp_chegada);
+        if(opcao != 1 && opcao != 2) {
+            printf("Opcao invalida, escolha novamente!\n");
+        }
     }
 
-    // 3.  Chama a função escolhida no menu
+    // Executa a opção escolhida através do switch
     switch(opcao) {
         case 1:
-            simularSRT(p, n); // Se 1, roda SRT
+            algoritmoRoundRobin(processos, n);
             break;
         case 2:
-            // Se 2, pede o parâmetro extra (Quantum) e roda Round Robin
-            printf("\nDigite o valor do QUANTUM (tempo maximo de CPU por ciclo): ");
-            scanf(" %d", &quantum);
-            simularRoundRobin(p, n, quantum);
+            simularSRT(processos, n);
             break;
     }
 
-    return 0; // Fim do programa com sucesso
+    return 0;
 }
