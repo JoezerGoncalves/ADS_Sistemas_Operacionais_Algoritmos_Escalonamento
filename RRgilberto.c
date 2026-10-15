@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#define QUANTUM 2
+
 typedef struct {
 
     char nome[20];      
