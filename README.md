@@ -1,7 +1,24 @@
-# ADS_Sistemas_Operacionais_Algoritmos_Escalonamento
 # Simulador de Algoritmos de Escalonamento
 
 Trabalho desenvolvido para a disciplina de **Sistemas Operacionais** do curso de **Tecnologia em Análise e Desenvolvimento de Sistemas (ADS)** do **Instituto Federal do Triângulo Mineiro (IFTM) - Campus Patrocínio**.
+
+
+Alunos:
+
+GABRYEL EDUARDO SOUZA OLIVEIRA
+
+JOÉZER GONÇALVES PEREIRA
+
+RAFAEL DE ÁVILA CARVALHO
+
+
+
+Professor 
+
+GILBERTO VIANA DE OLIVEIRA
+
+
+# 
 
 ## Sobre o Projeto
 
@@ -48,6 +65,7 @@ A cada unidade de tempo, a aplicação apresenta uma timeline contendo:
 - Processos que já chegaram ao sistema e estão no estado **Pronto**;
 - Tempo restante de processamento de cada processo;
 - Evolução da execução até a finalização de todos os processos.
+
 
 ### Exemplo
 
