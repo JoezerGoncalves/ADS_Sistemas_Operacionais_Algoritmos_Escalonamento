@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
-#include <limits.h>  // Necessário para usar INT_MAX
+#include <limits.h>
 
-#define QUANTUM 2    // Definição do Quantum fixo
+#define QUANTUM 2
 
-// Definição da estrutura (molde) de um Processo
+// Definição da estrutura
 typedef struct {
     char nome[20];      // Nome do processo (ex: P1, P2)
     int burst;          // Tempo total que o processo precisa na CPU
@@ -14,7 +14,7 @@ typedef struct {
 } Processos;
 
 
-// FUNÇÃO DO ALGORITMO ROUND ROBIN (Sua implementação)
+// FUNÇÃO DO ALGORITMO ROUND ROBIN
 void algoritmoRoundRobin(Processos p[], int n) {
     int tempo = 0;
     int concluidos = 0;
@@ -76,7 +76,7 @@ void algoritmoRoundRobin(Processos p[], int n) {
 }
 
 
-// FUNÇÃO DO ALGORITMO SRT 
+// FUNÇÃO DO ALGORITMO SRT
 void simularSRT(Processos p[], int n) {
     int tempo_atual = 0;
     int concluido = 0;
@@ -159,7 +159,7 @@ void simularSRT(Processos p[], int n) {
 }
 
 
-// FUNÇÃO PRINCIPAL (MAIN)
+
 int main(void) {
     int n, opcao = 0;
 
