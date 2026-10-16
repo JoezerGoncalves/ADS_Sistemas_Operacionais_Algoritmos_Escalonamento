@@ -76,7 +76,7 @@ void algoritmoRoundRobin(Processos p[], int n) {
 }
 
 
-// FUNÇÃO DO ALGORITMO SRT (Shortest Remaining Time - Sua implementação)
+// FUNÇÃO DO ALGORITMO SRT 
 void simularSRT(Processos p[], int n) {
     int tempo_atual = 0;
     int concluido = 0;
